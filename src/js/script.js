@@ -49,12 +49,17 @@ scene.add(box);
 //Instanciando um plane geometry definindo o tamanho
 const planeGeometry = new THREE.PlaneGeometry(30, 30);
 //Instanciando o material que será usado no plane
-const planeMaterial = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+const planeMaterial = new THREE.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    side: THREE.DoubleSide
+});
 //Instanciando o plane na mesh com a geometry e o material
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 
-const gridHelper = new THREE.GridHelper();
+plane.rotation.x = -0.5 * Math.PI;
+
+const gridHelper = new THREE.GridHelper(30);
 scene.add(gridHelper)
 
 

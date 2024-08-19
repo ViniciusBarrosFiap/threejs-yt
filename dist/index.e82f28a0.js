@@ -626,12 +626,14 @@ scene.add(box);
 const planeGeometry = new _three.PlaneGeometry(30, 30);
 //Instanciando o material que será usado no plane
 const planeMaterial = new _three.MeshBasicMaterial({
-    color: 0xFFFFFF
+    color: 0xFFFFFF,
+    side: _three.DoubleSide
 });
 //Instanciando o plane na mesh com a geometry e o material
 const plane = new _three.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
-const gridHelper = new _three.GridHelper();
+plane.rotation.x = -0.5 * Math.PI;
+const gridHelper = new _three.GridHelper(30);
 scene.add(gridHelper);
 //Função responsavel por fazer a animação do cubo adicionado na cena
 function animate(time) {
