@@ -1,13 +1,15 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import * as dat from "dat.gui";
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer(); //Instanciando o renderizador (canvas)
 
 //define a área da tela que será renderizado (largura e altura)
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 //adiciona o elemento canvas no body do DOM
 document.body.appendChild(renderer.domElement);
+
 //Instanciando a cena que será capturada pela camera
 //A cena é o principal, onde irá ficar posicionado os objetos e onde a camera perpectiva ou ortografica irão capturar a cena
 const scene = new THREE.Scene(); //cena
@@ -24,6 +26,7 @@ const camera = new THREE.PerspectiveCamera(
     0.1, //renderiza de perto
     1000 //deixa de renderizar de longe
 );
+
 //Permite manipular a perspective camera de acordo com o movimento do mouse
 //parâmetros: câmera, canvas(renderizador)
 const orbit = new OrbitControls(camera, renderer.domElement);
@@ -57,18 +60,61 @@ const planeMaterial = new THREE.MeshBasicMaterial({
 const plane = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 
-plane.rotation.x = -0.5 * Math.PI;
+plane.rotation.x = -0.5 * Math.PI; //Modificando a rotação do plane
 
+//Adicionando o grid para auxiliar
 const gridHelper = new THREE.GridHelper(30);
 scene.add(gridHelper)
 
+//Instanciando o geometry de uma esfera - radius 4
+const sphereGeometry = new THREE.SphereGeometry(4, 50, 50);
+
+//Interface para mudança da cor da sphere na aplicação
+const gui = new dat.GUI();
+
+//Objeto para armazenar as opções da esfera (cor e wireframe, etc)
+const options = {
+    sphereColor: '#ffea00',
+    wireframe: false
+};
+
+//Instanciando o material que será usando na esfera usando as options
+const sphereMaterial = new THREE.MeshBasicMaterial({
+    color: options.sphereColor,
+    wireframe: options.wireframe //mostra as linhas para facilitar a visualização da geometria
+});
+
+//Instanciando a esfera na geometria e o material instanciados
+const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+scene.add(sphere);
+
+//Modificando a posição da sphere
+sphere.position.set(-10, 10, 0);
+
+
+gui.addColor(options, 'sphereColor').onChange(function(e){
+    sphere.material.color.set(e);
+    sphere.material.needsUpdate = true;
+});
+
+gui.add(options, 'wireframe').onChange(function(e){
+    sphere.material.wireframe = e;
+    sphere.material.needsUpdate = true;
+})
+
+let step = 0;
+let speed = 0.01;
 
 //Função responsavel por fazer a animação do cubo adicionado na cena
 function animate(time) {
     box.rotation.x = time / 1000;
     box.rotation.y = time / 1000;
+
+    step += speed;
+    sphere.position.y = 10 * Math.abs(Math.sin(step));
+
     //A função será chamada em loop, então sempre que a posição estiver alterando ele já irá sendo renderizado na tela
     renderer.render(scene, camera); //renderizando a cena e a camera no canvas
-}
+};
 //Colocando a animação para rodar em loop
-renderer.setAnimationLoop(animate)
+renderer.setAnimationLoop(animate);
