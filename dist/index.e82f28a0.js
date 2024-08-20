@@ -638,13 +638,14 @@ plane.rotation.x = -0.5 * Math.PI; //Modificando a rotação do plane
 const gridHelper = new _three.GridHelper(30);
 scene.add(gridHelper);
 //Instanciando o geometry de uma esfera - radius 4
-const sphereGeometry = new _three.SphereGeometry(4, 50, 50);
+const sphereGeometry = new _three.SphereGeometry(2, 50, 50);
 //Interface para mudança da cor da sphere na aplicação
 const gui = new _datGui.GUI();
 //Objeto para armazenar as opções da esfera (cor e wireframe, etc)
 const options = {
     sphereColor: "#ffea00",
-    wireframe: false
+    wireframe: false,
+    speed: 0.01
 };
 //Instanciando o material que será usando na esfera usando as options
 const sphereMaterial = new _three.MeshBasicMaterial({
@@ -656,21 +657,24 @@ const sphere = new _three.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
 //Modificando a posição da sphere
 sphere.position.set(-10, 10, 0);
+//adicionando o color picker na interface 
 gui.addColor(options, "sphereColor").onChange(function(e) {
     sphere.material.color.set(e);
     sphere.material.needsUpdate = true;
 });
+//adicionando o wireframe na interface
 gui.add(options, "wireframe").onChange(function(e) {
     sphere.material.wireframe = e;
     sphere.material.needsUpdate = true;
 });
+//adicionando um slider para modificar a velocidade da animação na interface
+gui.add(options, "speed", 0, 0.1);
 let step = 0;
-let speed = 0.01;
 //Função responsavel por fazer a animação do cubo adicionado na cena
 function animate(time) {
     box.rotation.x = time / 1000;
     box.rotation.y = time / 1000;
-    step += speed;
+    step += options.speed;
     sphere.position.y = 10 * Math.abs(Math.sin(step));
     //A função será chamada em loop, então sempre que a posição estiver alterando ele já irá sendo renderizado na tela
     renderer.render(scene, camera); //renderizando a cena e a camera no canvas
