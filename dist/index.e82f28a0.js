@@ -584,10 +584,16 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 }
 
 },{}],"dV6cC":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _three = require("three");
 var _orbitControlsJs = require("three/examples/jsm/controls/OrbitControls.js");
 var _datGui = require("dat.gui");
+var _nebulaJpg = require("../img/nebula.jpg");
+var _nebulaJpgDefault = parcelHelpers.interopDefault(_nebulaJpg);
+var _starsJpg = require("../img/stars.jpg");
+var _starsJpgDefault = parcelHelpers.interopDefault(_starsJpg);
 const renderer = new _three.WebGLRenderer(); //Instanciando o renderizador (canvas)
+renderer.shadowMap.enabled = true;
 //define a área da tela que será renderizado (largura e altura)
 renderer.setSize(window.innerWidth, window.innerHeight);
 //adiciona o elemento canvas no body do DOM
@@ -626,7 +632,7 @@ scene.add(box);
 //Instanciando um plane geometry definindo o tamanho
 const planeGeometry = new _three.PlaneGeometry(30, 30);
 //Instanciando o material que será usado no plane
-const planeMaterial = new _three.MeshBasicMaterial({
+const planeMaterial = new _three.MeshStandardMaterial({
     color: 0xFFFFFF,
     side: _three.DoubleSide
 });
@@ -634,6 +640,7 @@ const planeMaterial = new _three.MeshBasicMaterial({
 const plane = new _three.Mesh(planeGeometry, planeMaterial);
 scene.add(plane);
 plane.rotation.x = -0.5 * Math.PI; //Modificando a rotação do plane
+plane.receiveShadow = true;
 //Adicionando o grid para auxiliar
 const gridHelper = new _three.GridHelper(30);
 scene.add(gridHelper);
@@ -645,10 +652,13 @@ const gui = new _datGui.GUI();
 const options = {
     sphereColor: "#ffea00",
     wireframe: false,
-    speed: 0.01
+    speed: 0.01,
+    angle: 0.2,
+    penumbra: 0,
+    intensity: 1
 };
 //Instanciando o material que será usando na esfera usando as options
-const sphereMaterial = new _three.MeshBasicMaterial({
+const sphereMaterial = new _three.MeshStandardMaterial({
     color: options.sphereColor,
     wireframe: options.wireframe //mostra as linhas para facilitar a visualização da geometria
 });
@@ -657,6 +667,48 @@ const sphere = new _three.Mesh(sphereGeometry, sphereMaterial);
 scene.add(sphere);
 //Modificando a posição da sphere
 sphere.position.set(-10, 10, 0);
+sphere.castShadow = true;
+//Instanciando a luz ambiente
+//A luz só irá funcionar nos objetos se estivrem com o material correto para receber a luz
+const ambientLight = new _three.AmbientLight(0x333333);
+scene.add(ambientLight);
+// const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.5);
+// scene.add(directionalLight);
+// directionalLight.position.set(-30, 50, 0);
+// directionalLight.castShadow = true;
+// directionalLight.shadow.camera.bottom = -12;
+// const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
+// scene.add(directionalLightHelper);
+// const dLightShadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+// scene.add(dLightShadowHelper)
+const spotLight = new _three.SpotLight(0xFFFFFF, 300);
+scene.add(spotLight);
+spotLight.position.set(-50, 50, 0);
+spotLight.castShadow = true;
+spotLight.angle = 0.2;
+const spotLightHelper = new _three.SpotLightHelper(spotLight);
+scene.add(spotLightHelper);
+scene.fog = new _three.FogExp2(0xFFFFFF, 0.01);
+// renderer.setClearColor(0xFFEA00);
+const textureLoader = new _three.TextureLoader();
+// scene.background = textureLoader.load(stars);
+const cubeTextureLoader = new _three.CubeTextureLoader();
+scene.background = cubeTextureLoader.load([
+    (0, _nebulaJpgDefault.default),
+    (0, _nebulaJpgDefault.default),
+    (0, _starsJpgDefault.default),
+    (0, _starsJpgDefault.default),
+    (0, _starsJpgDefault.default),
+    (0, _starsJpgDefault.default)
+]);
+const box2Geometry = new _three.BoxGeometry(4, 4, 4);
+const box2Material = new _three.MeshBasicMaterial({
+    // color: 0x00FF00,
+    map: textureLoader.load((0, _nebulaJpgDefault.default))
+});
+const box2 = new _three.Mesh(box2Geometry, box2Material);
+scene.add(box2);
+box2.position.set(0, 15, 10);
 //adicionando o color picker na interface 
 gui.addColor(options, "sphereColor").onChange(function(e) {
     sphere.material.color.set(e);
@@ -669,45 +721,27 @@ gui.add(options, "wireframe").onChange(function(e) {
 });
 //adicionando um slider para modificar a velocidade da animação na interface
 gui.add(options, "speed", 0, 0.1);
+gui.add(options, "angle", 0, 1);
+gui.add(options, "penumbra", 0, 1);
+gui.add(options, "intensity", 0, 500);
 let step = 0;
-const planeGeometry2 = new _three.PlaneGeometry(30, 30);
-const planeMaterial2 = new _three.MeshBasicMaterial({
-    color: 0xFFFFFF,
-    side: _three.DoubleSide
-});
-const plane2 = new _three.Mesh(planeGeometry2, planeMaterial2);
-scene.add(plane2);
-plane2.position.set(0, 15, 15);
-const planeGeometry3 = new _three.PlaneGeometry(30, 30);
-const planeMaterial3 = new _three.MeshBasicMaterial({
-    color: 0xFFFFFF,
-    side: _three.DoubleSide
-});
-const plane3 = new _three.Mesh(planeGeometry3, planeMaterial3);
-scene.add(plane3);
-plane3.position.set(0, 15, -15);
-const planeGeometry4 = new _three.PlaneGeometry(30, 30);
-const planeMaterial4 = new _three.MeshBasicMaterial({
-    color: 0xFFFFFF,
-    side: _three.DoubleSide
-});
-const plane4 = new _three.Mesh(planeGeometry4, planeMaterial4);
-scene.add(plane4);
-plane4.rotation.y = -0.5 * Math.PI;
-plane4.position.set(15, 15, 0);
 //Função responsavel por fazer a animação do cubo adicionado na cena
 function animate(time) {
     box.rotation.x = time / 1000;
     box.rotation.y = time / 1000;
     step += options.speed;
     sphere.position.y = 10 * Math.abs(Math.sin(step));
+    spotLight.angle = options.angle;
+    spotLight.penumbra = options.penumbra;
+    spotLight.intensity = options.intensity;
+    spotLightHelper.update();
     //A função será chamada em loop, então sempre que a posição estiver alterando ele já irá sendo renderizado na tela
     renderer.render(scene, camera); //renderizando a cena e a camera no canvas
 }
 //Colocando a animação para rodar em loop
 renderer.setAnimationLoop(animate);
 
-},{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","dat.gui":"k3xQk"}],"ktPTu":[function(require,module,exports) {
+},{"three":"ktPTu","three/examples/jsm/controls/OrbitControls.js":"7mqRv","dat.gui":"k3xQk","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../img/nebula.jpg":"ibF8l","../img/stars.jpg":"2IYlH"}],"ktPTu":[function(require,module,exports) {
 /**
  * @license
  * Copyright 2010-2024 Three.js Authors
@@ -35295,6 +35329,47 @@ var index = {
 };
 exports.default = index;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["2L15i","dV6cC"], "dV6cC", "parcelRequire5bbf")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ibF8l":[function(require,module,exports) {
+module.exports = require("8479a868291e8de0").getBundleURL("2MSMO") + "nebula.a535bdf2.jpg" + "?" + Date.now();
+
+},{"8479a868291e8de0":"lgJ39"}],"lgJ39":[function(require,module,exports) {
+"use strict";
+var bundleURL = {};
+function getBundleURLCached(id) {
+    var value = bundleURL[id];
+    if (!value) {
+        value = getBundleURL();
+        bundleURL[id] = value;
+    }
+    return value;
+}
+function getBundleURL() {
+    try {
+        throw new Error();
+    } catch (err) {
+        var matches = ("" + err.stack).match(/(https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/[^)\n]+/g);
+        if (matches) // The first two stack frames will be this function and getBundleURLCached.
+        // Use the 3rd one, which will be a runtime in the original bundle.
+        return getBaseURL(matches[2]);
+    }
+    return "/";
+}
+function getBaseURL(url) {
+    return ("" + url).replace(/^((?:https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/.+)\/[^/]+$/, "$1") + "/";
+}
+// TODO: Replace uses with `new URL(url).origin` when ie11 is no longer supported.
+function getOrigin(url) {
+    var matches = ("" + url).match(/(https?|file|ftp|(chrome|moz|safari-web)-extension):\/\/[^/]+/);
+    if (!matches) throw new Error("Origin not found");
+    return matches[0];
+}
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+exports.getOrigin = getOrigin;
+
+},{}],"2IYlH":[function(require,module,exports) {
+module.exports = require("85574a2b5524feae").getBundleURL("2MSMO") + "stars.a1d7fe60.jpg" + "?" + Date.now();
+
+},{"85574a2b5524feae":"lgJ39"}]},["2L15i","dV6cC"], "dV6cC", "parcelRequire5bbf")
 
 //# sourceMappingURL=index.e82f28a0.js.map
