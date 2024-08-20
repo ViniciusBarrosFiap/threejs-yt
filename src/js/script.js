@@ -107,6 +107,36 @@ gui.add(options, 'speed', 0, 0.1);
 
 let step = 0;
 
+const planeGeometry2 = new THREE.PlaneGeometry(30, 30);
+const planeMaterial2 = new THREE.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    side: THREE.DoubleSide
+});
+const plane2 = new THREE.Mesh(planeGeometry2, planeMaterial2);
+scene.add(plane2);
+
+plane2.position.set(0,15,15)
+
+const planeGeometry3 = new THREE.PlaneGeometry(30, 30);
+const planeMaterial3 = new THREE.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    side: THREE.DoubleSide
+});
+const plane3 = new THREE.Mesh(planeGeometry3, planeMaterial3);
+scene.add(plane3);
+
+plane3.position.set(0,15,-15)
+
+const planeGeometry4 = new THREE.PlaneGeometry(30, 30);
+const planeMaterial4 = new THREE.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    side: THREE.DoubleSide
+});
+const plane4 = new THREE.Mesh(planeGeometry4, planeMaterial4);
+scene.add(plane4);
+plane4.rotation.y = -0.5 * Math.PI;
+plane4.position.set(15,15,0)
+
 //Função responsavel por fazer a animação do cubo adicionado na cena
 function animate(time) {
     box.rotation.x = time / 1000;

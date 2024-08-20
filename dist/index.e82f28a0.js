@@ -670,6 +670,31 @@ gui.add(options, "wireframe").onChange(function(e) {
 //adicionando um slider para modificar a velocidade da animação na interface
 gui.add(options, "speed", 0, 0.1);
 let step = 0;
+const planeGeometry2 = new _three.PlaneGeometry(30, 30);
+const planeMaterial2 = new _three.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    side: _three.DoubleSide
+});
+const plane2 = new _three.Mesh(planeGeometry2, planeMaterial2);
+scene.add(plane2);
+plane2.position.set(0, 15, 15);
+const planeGeometry3 = new _three.PlaneGeometry(30, 30);
+const planeMaterial3 = new _three.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    side: _three.DoubleSide
+});
+const plane3 = new _three.Mesh(planeGeometry3, planeMaterial3);
+scene.add(plane3);
+plane3.position.set(0, 15, -15);
+const planeGeometry4 = new _three.PlaneGeometry(30, 30);
+const planeMaterial4 = new _three.MeshBasicMaterial({
+    color: 0xFFFFFF,
+    side: _three.DoubleSide
+});
+const plane4 = new _three.Mesh(planeGeometry4, planeMaterial4);
+scene.add(plane4);
+plane4.rotation.y = -0.5 * Math.PI;
+plane4.position.set(15, 15, 0);
 //Função responsavel por fazer a animação do cubo adicionado na cena
 function animate(time) {
     box.rotation.x = time / 1000;
